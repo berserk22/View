@@ -1,6 +1,7 @@
 {
   "name": "skeleton-app/view",
   "description": "SkeletonApp Module View",
+  "type": "modules",
   "require": {
     "php": ">=8.2"
   },
