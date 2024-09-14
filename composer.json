@@ -1,17 +1,18 @@
 {
   "name": "skeleton-app/view",
   "description": "SkeletonApp Module View",
+  "type": "modules",
   "require": {
     "php": ">=8.2"
   },
   "autoload": {
     "psr-4": {
-      "Modules\\View\\": "/"
+      "Modules\\View\\": "/modules/View/"
     }
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "master"
+      "dev-main": "dev"
     }
   },
   "minimum-stability": "dev",
