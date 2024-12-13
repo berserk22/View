@@ -69,7 +69,8 @@ class ViewManager extends AbstractViewer {
         "base64_encode",
         "base64_decode",
         "count",
-        "empty"
+        "empty",
+        "str_replace"
     ];
 
     /**
@@ -207,6 +208,7 @@ class ViewManager extends AbstractViewer {
     /**
      * @param mixed $content
      * @param array $data
+     * @param string $tmp_path
      * @return string
      */
     public function getHtmlFromContent(mixed $content, array $data = [], string $tmp_path = "tmp/"): string {
