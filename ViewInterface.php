@@ -7,17 +7,14 @@
 
 namespace Modules\View;
 
-use Slim\Http\Response;
+use Slim\Psr7\Response;
 
 interface ViewInterface {
 
 
     public function loadPlugins(): void;
 
-    /**
-     * @return void
-     */
-    public function initView(): void;
+    public function initView();
 
     /**
      * @param Response $response

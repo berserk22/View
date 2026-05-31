@@ -13,7 +13,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
 use Monolog\Handler\Handler;
-use Slim\Http\Response;
+use Slim\Psr7\Response;
 
 class ViewManager extends AbstractViewer {
 
@@ -48,6 +48,11 @@ class ViewManager extends AbstractViewer {
     public array $plugins = [];
 
     /**
+     * @var ViewManager[]
+     */
+    private array $siblingViews = [];
+
+    /**
      * @var array
      */
     public array $config = [];
@@ -79,7 +84,6 @@ class ViewManager extends AbstractViewer {
     public function registry(): void {
         try {
             $this->config = $this->getContainer()->get('config')->getSetting();
-
             $design_config = $this->getDB()->table('settings')
                 ->select('settings.key', 'settings.value')
                 ->join('settings_group', 'settings.settings_group_id', '=', 'settings_group.id')
@@ -90,7 +94,6 @@ class ViewManager extends AbstractViewer {
                 $config_keys = explode('_', $design_item->key);
                 $this->config[$config_keys[0]][$config_keys[1]] = $design_item->value;
             }
-
         } catch (DependencyException|NotFoundException $e) {
             die($e->getMessage());
         }
@@ -189,11 +192,22 @@ class ViewManager extends AbstractViewer {
     }
 
     /**
+     * @param ViewManager $view
+     * @return void
+     */
+    public function addSiblingView(ViewManager $view): void {
+        $this->siblingViews[] = $view;
+    }
+
+    /**
      * @param array $plugins
      * @return void
      */
     public function setPlugins(array $plugins = []): void {
-        $this->plugins=array_merge($this->plugins, $plugins);
+        $this->plugins = array_merge($this->plugins, $plugins);
+        foreach ($this->siblingViews as $sibling) {
+            $sibling->setPlugins($plugins);
+        }
     }
 
     /**
@@ -243,6 +257,8 @@ class ViewManager extends AbstractViewer {
      */
     public function renderJson(Response $response, array $data = [], int $status = 200): Response {
         $this->setVariables($data);
-        return $response->withJson($this->getVariables(), $status);
+        $payload = json_encode($this->getVariables(), JSON_UNESCAPED_UNICODE);
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($status);
     }
 }

@@ -8,7 +8,7 @@
 namespace Modules\View;
 
 use Core\Traits\App;
-use Slim\Http\Response;
+use Slim\Psr7\Response;
 
 abstract class AbstractViewer {
 
